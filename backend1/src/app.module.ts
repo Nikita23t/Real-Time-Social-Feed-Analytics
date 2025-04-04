@@ -4,8 +4,6 @@ import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { User } from './modules/user/entities/user.entity'
 import { RefreshToken } from './modules/auth/entities/refresh-token.entity'
-import { Webhook } from './modules/events/entities/webhook.entity'
-import { WebSocketSubscription } from './modules/websocket/websocket-subscription.entity'
 import { EventsModule } from './modules/events/events.module'
 import { Event } from './modules/events/entities/event.entity';
 import { AuthModule } from './modules/auth/auth.module'
@@ -25,7 +23,7 @@ import { AuthModule } from './modules/auth/auth.module'
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User, Event, RefreshToken, Webhook, WebSocketSubscription],
+      entities: [User, Event, RefreshToken],
       synchronize: process.env.NODE_ENV !== 'production',
       logging: true,
     }),

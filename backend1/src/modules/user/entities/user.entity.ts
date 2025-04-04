@@ -1,6 +1,4 @@
 import { RefreshToken } from 'src/modules/auth/entities/refresh-token.entity'
-import { Webhook } from 'src/modules/events/entities/webhook.entity'
-import { WebSocketSubscription } from 'src/modules/websocket/websocket-subscription.entity'
 import { Event } from 'src/modules/events/entities/event.entity'
 
 import {
@@ -47,9 +45,4 @@ export class User {
   @OneToMany(() => Event, (event) => event.user) 
   events: Event[]
 
-  @OneToMany(() => Webhook, wh => wh.user)
-  webhooks: Webhook[]
-
-  @OneToMany(() => WebSocketSubscription, ws => ws.user)
-  websocketSubscriptions: WebSocketSubscription[]
 }
