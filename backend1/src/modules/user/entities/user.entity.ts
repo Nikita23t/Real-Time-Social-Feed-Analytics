@@ -30,14 +30,14 @@ export class User {
   @Column({ default: 'USER' })
   role: string
 
+  @Column({ default: true })
+  isActive: boolean
+
   @CreateDateColumn()
   createdAt: Date
 
   @UpdateDateColumn()
   updatedAt: Date
-
-  @Column({ default: true })
-  isActive: boolean
 
 
 

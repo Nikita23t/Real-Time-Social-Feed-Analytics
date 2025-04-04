@@ -2,35 +2,42 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
+import { UserDto } from './dto/user.dto';
 
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private usersRepository: Repository<User>,
-  ) {}
+    private userRepository: Repository<User>,
+  ) { }
 
-  findAll() {
-    return this.usersRepository.find();
+  async findAll() {
+    const users = await this.userRepository.find()
+    return users;
   }
 
-  findOne(id: number) {
-    return this.usersRepository.findOne({ where: { id } });
+  async getUserByEmail(email: string) {
+    const user = await this.userRepository.findOne({ where: { email } })
+    return user;
   }
 
-  async create(userData: CreateUserDto) {
-    const newUser = this.usersRepository.create(userData);
-    return this.usersRepository.save(newUser);
+  async findUserById(id: number) {
+    return this.userRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, updateData: CreateUserDto)  {
-    await this.usersRepository.update(id, updateData);
-    return this.usersRepository.findOne({ where: { id } });
+  async createUser(dto: UserDto) {
+    const user = await this.userRepository.create(dto);
+    return this.userRepository.save(user);
   }
 
-  async remove(id: number) {
-    await this.usersRepository.delete(id);
+  async updateUser(id: number, updateData: UserDto) {
+    await this.userRepository.update(id, updateData);
+    return this.userRepository.findOne({ where: { id } });
   }
+
+  async deleteUser(id: number) {
+    await this.userRepository.delete(id);
+  }
+
 }

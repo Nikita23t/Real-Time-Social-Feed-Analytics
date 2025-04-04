@@ -9,6 +9,7 @@ import { Webhook } from './modules/events/entities/webhook.entity'
 import { WebSocketSubscription } from './modules/websocket/websocket-subscription.entity'
 import { EventsModule } from './modules/events/events.module'
 import { Event } from './modules/events/entities/event.entity';
+import { AuthModule } from './modules/auth/auth.module'
 
 @Module({
   controllers: [],
@@ -30,7 +31,8 @@ import { Event } from './modules/events/entities/event.entity';
       logging: true,
     }),
     UserModule,
-    EventsModule
+    EventsModule,
+    AuthModule
   ],
 })
 export class AppModule {}
