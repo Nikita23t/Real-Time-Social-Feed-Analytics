@@ -12,7 +12,7 @@ _Микросервисная система для обработки собы�
 ```ini
                           Клиент (Web/Mobile)
                                  │
-                                 ├── REST API (API Gateway) ──┐
+                                 ├── REST API (API Gateway) ─┐
                                  │                           │
                                  └── WebSocket (API Gateway) │
                                                              │
@@ -21,26 +21,26 @@ _Микросервисная система для обработки собы�
                                    └── topic: notifications  │
                                                              │
 ┌────────────────────────────────────────────────────────────┤
-│                                                          │  │
-│ Микросервис 1: API Gateway (Nest.js)                     │  │
-│   - REST: Приём событий (POST /api/events)               │  │
-│   - WebSocket: Рассылка уведомлений клиентам             │  │
-│   - JWT Auth / Rate Limiting                            │  │
-│   - Kafka Producer (user-actions)                       │  │
-│                                                          │  │
-├──────────────────────────────────────────────────────────│  │
-│                                                          │  │
-│ Микросервис 2: Event Processor (Nest.js)                 │  │
-│   - Kafka Consumer (user-actions)                        │◀┘  
-│   - Аналитика: агрегация данных в PostgreSQL             │
-│   - Real-time счётчики в Redis (например, топ постов)    │
-│   - Отправка алертов в Kafka (notifications)             │───┐
-│                                                          │   │
-└──────────────────────────────────────────────────────────┘   │
-                                                             │  │
+│                                                            │──┐
+│ Микросервис 1: API Gateway (Nest.js)                       │  │
+│   - REST: Приём событий (POST /api/events)                 │  │
+│   - WebSocket: Рассылка уведомлений клиентам               │  │
+│   - JWT Auth / Rate Limiting                               │  │
+│   - Kafka Producer (user-actions)                          │  │
+│                                                            │  │
+├──────────────────────────────────────────────────────--────│  │
+│                                                            │  │
+│ Микросервис 2: Event Processor (Nest.js)                   │  │
+│   - Kafka Consumer (user-actions)                          │ ◀┘  
+│   - Аналитика: агрегация данных в PostgreSQL               │
+│   - Real-time счётчики в Redis (например, топ постов)      │
+│   - Отправка алертов в Kafka (notifications)               │───┐
+│                                                            │   │
+└──────────────────────────────────────────────────────--────┘   │
+                                                             │   │
 Grafana Dashboard ◀── [PostgreSQL (история) + Redis (realtime)]  │
-                                                             │  │
-                                                             │  │
+                                                             │   │
+                                                             │   │
                                  Alert Engine (в составе Event Processor)
                                    - Анализ данных → Kafka (notifications)
 ```
@@ -74,53 +74,6 @@ Grafana Dashboard ◀── [PostgreSQL (история) + Redis (realtime)]  �
 - **Alert Engine**:
   - Мониторинг аномалий (например, резкий рост лайков → проверка на накрутку).
   - Генерация уведомлений → отправка в Kafka `notifications`.
-
----
-
-### 🛠 Примеры технологических решений
-
-**Для API Gateway**:
-```typescript
-// kafka-producer.service.ts
-@Injectable()
-export class KafkaProducer {
-  constructor(private readonly kafkaService: KafkaService) {}
-
-  async sendEvent(payload: UserActionEvent) {
-    await this.kafkaService.emit('user-actions', {
-      key: payload.userId, // Партицирование по userId
-      value: JSON.stringify(payload),
-    });
-  }
-}
-
-// websocket.gateway.ts
-@WebSocketGateway()
-export class WsGateway {
-  @SubscribeTo('notifications')
-  handleNotification(payload: string) {
-    this.server.emit('notification', payload); // Рассылка всем клиентам
-  }
-}
-```
-
-**Для Event Processor**:
-```typescript
-// kafka-consumer.service.ts
-@KafkaListener('user-actions')
-async handleUserActions(
-  @Payload() message: KafkaMessage,
-) {
-  const event = JSON.parse(message.value.toString());
-  await this.postgresService.saveEvent(event);
-  await this.redisClient.zIncrBy('top_posts', 1, `post:${event.postId}`);
-  
-  // Проверка триггеров для алертов
-  if (await this.isFraudDetected(event)) {
-    this.kafka.emit('notifications', { type: 'FRAUD', data: event });
-  }
-}
-```
 
 ---
 
@@ -191,5 +144,3 @@ cd event-processor && npm run start:dev
 3. **Безопасность**:
    - Шифрование данных в Kafka (SSL/SASL).
    - Роли в Redis (ACL).
-
-Такой проект отлично покажет ваши навыки проектирования распределённых систем. Удачи!

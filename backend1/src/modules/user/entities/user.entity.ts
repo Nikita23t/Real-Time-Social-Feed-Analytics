@@ -1,4 +1,3 @@
-import { RateLimit } from 'src/modules/auth/entities/rate-limit.entity'
 import { RefreshToken } from 'src/modules/auth/entities/refresh-token.entity'
 import { Webhook } from 'src/modules/events/entities/webhook.entity'
 import { WebSocketSubscription } from 'src/modules/websocket/websocket-subscription.entity'
@@ -44,9 +43,6 @@ export class User {
   
   @OneToMany(() => RefreshToken, rt => rt.user)
   refreshTokens: RefreshToken[]
-
-  @OneToMany(() => RateLimit, rl => rl.user)
-  rateLimits: RateLimit[]
 
   @OneToMany(() => Event, (event) => event.user) 
   events: Event[]
