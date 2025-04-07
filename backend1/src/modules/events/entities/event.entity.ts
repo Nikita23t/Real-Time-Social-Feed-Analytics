@@ -22,8 +22,8 @@ export enum EventStatus {
 @Entity()
 export class Event {
   
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number
 
   @Column({
     type: 'enum',
@@ -32,15 +32,21 @@ export class Event {
   })
   type: EventType;
 
-  @Column('jsonb')
-  payload: Record<string, any>;
-
   @Column({
     type: 'enum',
     enum: EventStatus,
     default: EventStatus.PENDING,
   })
   status: EventStatus;
+
+  @Column({ nullable: true })
+  data: string;
+
+  @Column({ nullable: true })
+  postId?: number;
+
+  @Column({ nullable: true })
+  commentId?: number;
 
   @Column({ type: 'bigint', nullable: true })
   kafkaOffset?: number;

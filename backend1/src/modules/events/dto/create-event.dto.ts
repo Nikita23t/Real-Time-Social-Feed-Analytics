@@ -1,14 +1,23 @@
-import { IsEnum, IsObject, IsOptional, IsUUID } from 'class-validator';
-import { EventType } from '../entities/event.entity';
+import { IsEnum, IsNumber, IsOptional, IsUUID, ValidateNested } from 'class-validator';
+import { EventStatus, EventType } from '../entities/event.entity';
+import { Type } from 'class-transformer';
 
 export class CreateEventDto {
   @IsEnum(EventType)
   type: EventType;
 
-  @IsObject()
-  payload: Record<string, any>;
+  @IsEnum(EventStatus)
+  @IsOptional()
+  status?: EventStatus;
 
-  @IsUUID()
-  @IsOptional() 
-  userId?: string;
+  data: string;
+
+  @IsOptional()
+  postId?: number;
+
+  @IsOptional()
+  commentId?: number;
+
+  @IsNumber()
+  userId: number;
 }
