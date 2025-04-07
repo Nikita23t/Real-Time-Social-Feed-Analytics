@@ -25,6 +25,9 @@ export class Event {
   @PrimaryGeneratedColumn()
   id: number
 
+  @Column()
+  userId: number;
+
   @Column({
     type: 'enum',
     enum: EventType,
