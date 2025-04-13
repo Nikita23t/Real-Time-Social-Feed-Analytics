@@ -7,10 +7,17 @@ import { RefreshToken } from './modules/auth/entities/refresh-token.entity'
 import { EventsModule } from './modules/events/events.module'
 import { Event } from './modules/events/entities/event.entity';
 import { AuthModule } from './modules/auth/auth.module'
+import { APP_GUARD } from '@nestjs/core'
+import { RolesGuard } from './modules/auth/roles.guard'
 
 @Module({
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+  ],
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
